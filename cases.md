@@ -1,63 +1,72 @@
-Cases that will and will not be supported.
+# Supported and not supported cases
 
-Most code chunks from PenLight source (library which spawned ldoc).
+## Supported
 
-At the first stage LDoc comments will be created for all supported
-cases if there is no LDoc comments for them. (So that comments will
-never be changed automatically.)
+* Named global function.
 
-At the second stage automatic comment update for new/gone function
-parameters may be done. (This requires carefully parsing comment
-structure. And thoughts about common backfires (like that then big
-annotation text will be dropped just because we renamed parameter).)
+  ```lua
+  function array2d.remove_col(t, j)
+  end
+  ```
 
--- IS supported
+  This is a common form to describe global function.
 
-  * Named non-local function.
+## Not supported
 
-    --- remove a column from an array.
-    -- @array2d t a 2d array
-    -- @int j a column index
-    function array2d.remove_col (t,j)
-        assert_arg(1,t,'table')
-        for i = 1,#t do
-            remove(t[i],j)
-        end
+* Assignment to function.
+
+  ```lua
+  array2d.remove_row = remove
+  ```
+
+  Hard to implement.
+
+* Named local function.
+
+  ```lua
+  local function dimension(t)
+  end
+  ```
+
+  Not many want to document (and read documentation) for local
+  functions.
+
+* Anonymous function.
+
+  ```lua
+  f =
+    function(a)
     end
+  ```
 
--- NOT supported
+  ```lua
+  local DataMT = {
+    column_by_name = function(self, name)
+    end,
+  }
+  ```
 
-  * Assignment to function.
+  Hard to distinguish between global functions (than we wish to
+  document) and other functions (which we're not going to document).
 
-    --- remove a row from an array.
-    -- @function array2d.remove_row
-    -- @array2d t a 2d array
-    -- @int i a row index
-    array2d.remove_row = remove
 
-  * Local functions definition.
+## Implementation stages
 
-    local function dimension (t)
-      return type(t[1])=='table' and 2 or 1
-    end
+1. LDoc comments added if entity has no LDoc comments yet.
 
-  * Anonymous functions ("function" value type)
+   So already present comments will never be changed automatically.
 
-    local DataMT = {
-      column_by_name = function(self,name)
-        if type(name) == 'number' then
-          name = '$'..name
-        end
-        local arr = {}
-        for res in data.query(self,name) do
-          append(arr,res)
-        end
-        return makelist(arr)
-      end,
+2. Function parameter comments match function parameters.
 
-    f =
-      function(a)
-      end
+   This inroduces danger of dropping valuable description text because
+   parameter was renamed. Also this requires more coding work in
+   parsing comment structure.
 
-  * Parameter types guessing. All function arguments is listed
-    under "@param" tag.
+Currently stage 1 is implemented.
+
+---
+
+```
+2017-08-28
+2018-06-07 better docs
+```
