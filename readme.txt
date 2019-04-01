@@ -7,5 +7,5 @@ Requirements:
   Linux (not tested under other OS's)
 
 Usage:
-  lua autodoc.lua <source> <new_file>
+  lua autoldoc.lua <source> <new_file>
 
