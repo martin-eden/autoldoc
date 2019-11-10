@@ -9,6 +9,6 @@ return
     '--',
     handy.cho(
       long_bracket,
-      match_regexp('[^\n\r]*[\n\r]')
+      match_regexp('[^\n\r]*[\n\r]?')
     )
   }
